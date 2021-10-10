@@ -13,59 +13,62 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
-import web.config.handler.LoginSuccessHandler;
 
 
-@Configuration
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.annotation.Bean;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.password.NoOpPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+
+//@Configuration - присутсвует в @EnableWebSecurity, поэтому не требуется
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
-    private final UserDetailsService userDetailsService;
-    private final LoginSuccessHandler successUserHandler;
+    private final UserDetailsService userDetailsService; // сервис, с помощью которого тащим пользователя
+    private final SuccessUserHandler successUserHandler; // класс, в котором описана логика перенаправления пользователей по ролям
 
-    @Autowired
-    public SecurityConfig(@Qualifier ("personalUserService")UserDetailsService userDetailsService, LoginSuccessHandler successUserHandler) {
+    public SecurityConfig(@Qualifier("userDetailsServiceImpl") UserDetailsService userDetailsService, SuccessUserHandler successUserHandler) {
         this.userDetailsService = userDetailsService;
         this.successUserHandler = successUserHandler;
     }
 
     @Autowired
     public void configureGlobalSecurity(AuthenticationManagerBuilder auth) throws Exception {
-        auth.authenticationProvider(daoAuthenticationProvider());
-        auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
+        auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder()); // конфигурация для прохождения аутентификации
     }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http
-                .csrf().disable()
-                .authorizeRequests(authorize -> authorize
-                        .antMatchers("/").permitAll()
-                        .antMatchers("/user/**").hasAnyRole("USER", "ADMIN")
-                        .antMatchers("/admin/**").hasRole ("ADMIN")
-                        .anyRequest()
-                        .authenticated()
-                ).formLogin()
-                .successHandler(successUserHandler)
+        //Защита CSRF включена по умолчанию в конфигурации Java. Мы все еще можем отключить его, если нам нужно.
+        //http.csrf().disable();
+        http.authorizeRequests()
+                .antMatchers("/", "/login", "/logout").permitAll() // доступность всем
+                .antMatchers("/user/**").access("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')") // разрешаем входить на /user пользователям с ролью User, Admin
+                .antMatchers("/admin/**").access("hasAnyRole('ROLE_ADMIN')") // разрешает входить на /admin пользователю с ролью Admin
                 .and()
-                .logout()
-                .logoutRequestMatcher(new AntPathRequestMatcher("/logout", "POST"))
-                .invalidateHttpSession(true)
-                .clearAuthentication(true)
-                .deleteCookies("JSESSIONID")
-                .logoutSuccessUrl("/login");
-        ;
+                .formLogin()  // Spring сам подставит свою логин форму
+//                .loginProcessingUrl("/j_spring_security_check")
+//                .loginPage("/login")
+//                .defaultSuccessUrl("/user", true)
+//                .failureUrl("/login?error=true")
+//                .usernameParameter("name")
+//                .passwordParameter("password")
+                .successHandler(successUserHandler) // подключаем наш SuccessHandler для перенеправления по ролям
+                .and().logout()
+                .logoutUrl("/logout") //URL-адрес, запускающий выход из системы (по умолчанию "/ logout").
+                .logoutSuccessUrl("/login") //URL-адрес для перенаправления после выхода из системы.
+                .and().csrf().disable();
     }
 
+    // Необходимо для шифрования паролей
+    // В данном примере не используется, отключен
     @Bean
     public PasswordEncoder passwordEncoder() {
         return NoOpPasswordEncoder.getInstance();
-    }
-
-    @Bean
-    public DaoAuthenticationProvider daoAuthenticationProvider() {
-        DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
-        authenticationProvider.setPasswordEncoder(passwordEncoder());
-        authenticationProvider.setUserDetailsService(userDetailsService());
-        return authenticationProvider;
     }
 }

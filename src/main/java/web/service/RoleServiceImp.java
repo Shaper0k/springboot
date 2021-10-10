@@ -1,17 +1,20 @@
 package web.service;
 
+import org.springframework.stereotype.Service;
 import web.dao.RoleRepository;
 import web.model.Role;
 
 import java.util.List;
 
-public class RoleServiceImp implements RoleService{
+@Service
+public class RoleServiceImp implements RoleService {
 
     private final RoleRepository roleRepository;
 
     public RoleServiceImp(RoleRepository roleRepository) {
         this.roleRepository = roleRepository;
     }
+
 
     @Override
     public void addRole(Role role) {
@@ -34,7 +37,7 @@ public class RoleServiceImp implements RoleService{
     }
 
     @Override
-    public Role getRoleByName(String login) {
-        return roleRepository.getRoleByName(login);
+    public Role getRoleByName(String name) {
+        return roleRepository.getRoleByName(name);
     }
 }

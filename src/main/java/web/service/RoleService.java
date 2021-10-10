@@ -5,6 +5,7 @@ import web.model.Role;
 import java.util.List;
 
 public interface RoleService {
+
     void addRole(Role role);
 
     void updateRole(Role role);
@@ -14,5 +15,4 @@ public interface RoleService {
     List<Role> getAllRoles();
 
     Role getRoleByName(String name);
-
 }

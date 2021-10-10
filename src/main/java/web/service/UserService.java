@@ -4,12 +4,19 @@ import web.model.User;
 
 import javax.transaction.Transactional;
 import java.util.List;
+import java.util.Optional;
 
 public interface UserService {
+
     void addUser(User user);
+
     void updateUser(User user);
-    void deleteUser(long id);
+
+    void removeUserById(long id);
+
+    Optional<User> getUserById(long id);
+
     List<User> getAllUsers();
-    @Transactional
-    User findUserByUsername (String login);
+
+    User getUserByUsername(String name);
 }

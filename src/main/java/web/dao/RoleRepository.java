@@ -7,5 +7,5 @@ import web.model.Role;
 @Repository
 public interface RoleRepository extends JpaRepository<Role, Long> {
 
-    Role getRoleByLogin(String login);
+    Role getRoleByName(String name);
 }
