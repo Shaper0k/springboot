@@ -67,8 +67,8 @@
             <td th:text="${user.firstName}">Имя</td>
             <td th:text="${user.lastName}">Фамилия</td>
             <td th:text="${user.email}">e-mail</td>
-            <td><a th:href="@{/edit/{id}(id=${user.id})}">Edit</a></td>
-            <td><a th:href="@{/remove/{id}(id=${user.id})}">Delete</a></td>
+            <td><a th:href="@{/admin/edit/{id}(id=${user.id})}">Edit</a></td>
+            <td><a th:href="@{/admin/remove/{id}(id=${user.id})}">Delete</a></td>
         </tr>
     </table>
     <br/>

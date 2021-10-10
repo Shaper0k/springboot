@@ -15,6 +15,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Controller
+@RequestMapping("/admin")
 public class UserController {
 
     private final UserService userService;
@@ -26,27 +27,21 @@ public class UserController {
         this.roleService = roleService;
     }
 
-    @GetMapping(value = "/user")
-    public String userInfo(@AuthenticationPrincipal User user, Model model){
-        model.addAttribute("user", user);
-        model.addAttribute("roles", user.getRoles());
-        return "userpage";
-    }
 
-    @GetMapping(value = "/admin")
+    @GetMapping
     public String listUsers(Model model) {
         model.addAttribute("allUsers", userService.getAllUsers());
         return "adminpage";
     }
 
-    @GetMapping(value = "/admin/new")
+    @GetMapping(value = "/new")
     public String newUser(Model model) {
         model.addAttribute("user", new User());
         model.addAttribute("roles", roleService.getAllRoles());
         return "new";
     }
 
-    @PostMapping(value = "/admin/add-user")
+    @PostMapping(value = "/add-user")
     public String addUser(@ModelAttribute User user, @RequestParam(value = "checkBoxRoles") String[] checkBoxRoles) {
         Set<Role> roleSet = new HashSet<>();
         for (String role : checkBoxRoles) {
