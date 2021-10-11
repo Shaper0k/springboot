@@ -15,20 +15,20 @@
                 <td><input type="text" th:field="*{username}"></td>
             </tr>
             <tr>
-            <tr>
-                <td>password:</td>
-                <td><input type="text" th:field="*{password}"/></td>
-            </tr>
-            <td>Имя:</td>
-            <td><input type="text" th:field="*{firstName}"></td>
+                <td>Name:</td>
+                <td><input type="text" th:field="*{firstName}"></td>
             </tr>
             <tr>
-                <td>Фамилия:</td>
+                <td>Last Name:</td>
                 <td><input type="text" th:field="*{lastName}"/></td>
             </tr>
             <tr>
-                <td>e-mail:</td>
+                <td>Email:</td>
                 <td><input type="text" th:field="*{email}"/></td>
+            </tr>
+            <tr>
+                <td>Password:</td>
+                <td><input type="text" th:field="*{password}"/></td>
             </tr>
             <input type="checkbox" name="checkBoxRoles" value="ROLE_USER"/>USER
             <input type="checkbox" name="checkBoxRoles" value="ROLE_ADMIN"/>ADMIN
@@ -38,7 +38,7 @@
         <td colspan="2"><input type="submit" value="Add"></td>
         <br/>
         <br/>
-        <a th:href="@{/logout}">logout</a>
+        <a th:href="@{/logout}">LOGOUT</a>
     </form>
 </div>
 </body>
