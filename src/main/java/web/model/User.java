@@ -34,7 +34,7 @@ public class User implements UserDetails {
     @Column
     private String password;
 
-    //список ролей загружается вместе с пользователем сразу (не ждет пока к нему обратятся).
+
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "users_roles", joinColumns = @JoinColumn(name = "users_id"),
             inverseJoinColumns = @JoinColumn(name = "roles_id"))
@@ -43,7 +43,7 @@ public class User implements UserDetails {
     public User() {
     }
 
-    public User(Long id, String username,String firstName, String lastName, String email, String password,
+    public User(Long id, String username,String firstName, String lastName, String phoneNumber, String email, String password,
                 Set<Role> roles) {
         this.id = id;
         this.username = username;
