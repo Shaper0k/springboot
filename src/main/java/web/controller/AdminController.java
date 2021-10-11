@@ -15,6 +15,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Controller
+@RequestMapping("/admin")
 public class AdminController {
     private final UserService userService;
     private final RoleService roleService;
@@ -25,20 +26,20 @@ public class AdminController {
         this.roleService = roleService;
     }
 
-    @GetMapping(value = "/admin")
+    @GetMapping
     public String listUsers(Model model) {
         model.addAttribute("allUsers", userService.getAllUsers());
         return "admin-panel";
     }
 
-    @GetMapping(value = "/admin/new")
+    @GetMapping(value = "/new")
     public String newUser(Model model) {
         model.addAttribute("user", new User());
         model.addAttribute("roles", roleService.getAllRoles());
         return "add";
     }
 
-    @PostMapping(value = "/admin/add-user")
+    @PostMapping(value = "/add-user")
     public String addUser(@ModelAttribute User user, @RequestParam(value = "checkBoxRoles") String[] checkBoxRoles) {
         Set<Role> roleSet = new HashSet<>();
         for (String role : checkBoxRoles) {
@@ -49,14 +50,14 @@ public class AdminController {
         return "redirect:/admin";
     }
 
-    @GetMapping(value = "/admin/edit/{id}")
+    @GetMapping(value = "/edit/{id}")
     public String editUserForm(@PathVariable("id") long id, Model model) {
         model.addAttribute("user", userService.getUserById(id));
         model.addAttribute("roles", roleService.getAllRoles());
         return "edit";
     }
 
-    @PostMapping(value = "/admin/edit-user")
+    @PostMapping(value = "/edit-user")
     public String editUser(@ModelAttribute User user, @RequestParam(value = "checkBoxRoles") String[] checkBoxRoles) {
         Set<Role> roleSet = new HashSet<>();
         for (String roles : checkBoxRoles) {
@@ -67,7 +68,7 @@ public class AdminController {
         return "redirect:/admin";
     }
 
-    @GetMapping(value = "/admin/remove/{id}")
+    @GetMapping(value = "/remove/{id}")
     public String removeUser(@PathVariable("id") long id) {
         userService.removeUserById(id);
         return "redirect:/admin";
